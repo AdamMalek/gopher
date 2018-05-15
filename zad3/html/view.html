@@ -1,0 +1,20 @@
+<html>
+<head>
+    <title>Golang adventure</title>
+    <style>
+        a{
+            display: block;
+        }
+    </style>
+</head>
+<body>
+   <h4>{{ .Title }}</h4>
+    {{ range $story := .Story }}
+        <p>{{ $story }}</p>
+    {{ end }}
+    <br />
+    {{ range $option := .Options }}
+        <a href="/{{ $option.Arc }}">{{ $option.Text }}</a>
+    {{ end }}
+</body>
+</html>
