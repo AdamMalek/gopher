@@ -18,13 +18,14 @@ func main() {
 	handler := handler.GetHandler(storyProvider, defaultMux())
 
 	fmt.Println("Starting the server on :" + *port)
+
 	http.ListenAndServe(":"+*port, handler)
 }
 
 func defaultMux() *http.ServeMux {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "Yo")
+		http.Redirect(w, r, "/intro", 200)
 	})
 	return mux
 }

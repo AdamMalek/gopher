@@ -1,0 +1,61 @@
+package linkparser
+
+import (
+	"io"
+	"strings"
+
+	"golang.org/x/net/html"
+)
+
+// GetLinks gets all links found
+func GetLinks(r io.Reader) []Link {
+
+	node, err := html.Parse(r)
+	if err != nil {
+		panic(err)
+	}
+
+	var links []Link
+	addNode := func(l Link) {
+		links = append(links, l)
+	}
+
+	for c := node; c != nil; c = c.NextSibling {
+		parse(c, addNode)
+	}
+
+	return links
+}
+
+func parse(node *html.Node, addLink func(Link)) {
+	if node.Type == html.ElementNode && node.Data == "a" {
+		addLink(parseLink(node))
+	} else {
+		for c := node.FirstChild; c != nil; c = c.NextSibling {
+			parse(c, addLink)
+		}
+	}
+}
+
+func parseLink(node *html.Node) Link {
+	url := ""
+	for _, a := range node.Attr {
+		if a.Key == "href" {
+			url = a.Val
+		}
+	}
+
+	return Link{URL: url, Text: getText(node)}
+}
+
+func getText(node *html.Node) string {
+	text := ""
+	for c := node.FirstChild; c != nil; c = c.NextSibling {
+		if c.Type == html.TextNode {
+			text += c.Data
+		} else if c.Type == html.ElementNode {
+			text += getText(c)
+		}
+	}
+	return strings.TrimSpace(text)
+}
