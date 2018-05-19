@@ -8,11 +8,11 @@ import (
 )
 
 // GetLinks gets all links found
-func GetLinks(r io.Reader) []Link {
+func GetLinks(r io.Reader) ([]Link, error) {
 
 	node, err := html.Parse(r)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	var links []Link
@@ -20,11 +20,9 @@ func GetLinks(r io.Reader) []Link {
 		links = append(links, l)
 	}
 
-	for c := node; c != nil; c = c.NextSibling {
-		parse(c, addNode)
-	}
+	parse(node, addNode)
 
-	return links
+	return links, nil
 }
 
 func parse(node *html.Node, addLink func(Link)) {
