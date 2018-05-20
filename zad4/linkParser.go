@@ -39,7 +39,8 @@ func parseLink(node *html.Node) Link {
 	url := ""
 	for _, a := range node.Attr {
 		if a.Key == "href" {
-			url = a.Val
+			url = strings.Split(a.Val, "?")[0]
+			url = strings.Split(url, "#")[0]
 		}
 	}
 
